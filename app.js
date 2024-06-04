@@ -29,7 +29,7 @@ app.set("trust proxy", true);
 app.use(express.static("public"));
 
 // Security middleware initialization
-app.use(cors());
+app.use(cors({ origin: "https://marketx87.com" }));
 app.use(helmet());
 app.use(mongoSanitize());
 app.use(hpp());

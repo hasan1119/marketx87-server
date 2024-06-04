@@ -14,7 +14,6 @@ const helmet = require("helmet");
 const mongoSanitize = require("express-mongo-sanitize");
 const hpp = require("hpp");
 const morgan = require("morgan");
-app.set("trust proxy", true);
 
 // express app initialization
 const app = express();
@@ -23,6 +22,7 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser(process.env.COOKIE_SECRETE));
+app.set("trust proxy", true);
 // app.use(fileUpload());
 
 // Serve static files from the 'public' directory

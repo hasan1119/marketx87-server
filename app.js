@@ -45,6 +45,11 @@ const limiter = rateLimit({
 
 // app.use(limiter);
 
+// root
+app.get("/", (req, res) => {
+  res.send("Server is running");
+});
+
 // Routing middleware initialization
 readdirSync("./src/routes").map((r) =>
   app.use(`/api/v1`, require(`./src/routes/${r}`))

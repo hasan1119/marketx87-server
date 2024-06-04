@@ -13,6 +13,7 @@ const checkLogin = async (req, res, next) => {
         _id: decode.id,
       });
       if (user === null) {
+        console.log("not login");
         return res.status(401).send({
           status: "Unauthorized",
         });
@@ -36,6 +37,7 @@ const checkLogin = async (req, res, next) => {
       });
     }
   } catch (error) {
+    console.log(error);
     if (error.message === "jwt expired") {
       return res.status(401).send({
         status: "Unauthorized",

@@ -43,7 +43,7 @@ const limiter = rateLimit({
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
 
-app.use(limiter);
+// app.use(limiter);
 
 // Routing middleware initialization
 readdirSync("./src/routes").map((r) =>

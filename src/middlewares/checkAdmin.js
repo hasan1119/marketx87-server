@@ -6,10 +6,7 @@ const User = require("../models/user");
 const checkAdmin = async (req, res, next) => {
   console.log(req.user);
   try {
-    if (
-      (req.user && req.user.role && req.user.role.includes("Admin")) ||
-      req.user.role.includes("SuperAdmin")
-    ) {
+    if (req.user && req.user.role && req.user.role.includes("Admin")) {
       next();
     } else {
       res.sendStatus(401);

@@ -1,7 +1,7 @@
 /* User Routes */
 
-const express = require('express');
-const checkLogin = require('../middlewares/checkLogin');
+const express = require("express");
+const checkLogin = require("../middlewares/checkLogin");
 const {
   updatePassword,
   updateInfo,
@@ -10,18 +10,19 @@ const {
   addEducation,
   createBlog,
   getBlogs,
-} = require('../controllers/user');
-const { imagConfig } = require('../utils/fileUpload.config');
-const fileUploader = require('../middlewares/fileUploader');
+  accountActivation,
+} = require("../controllers/user");
+const { imagConfig } = require("../utils/fileUpload.config");
+const fileUploader = require("../middlewares/fileUploader");
 // const fileUploader = require('../middlewares/fileUploader');
 const router = express.Router();
 
 // password update
-router.put('/update-password', checkLogin, updatePassword);
+router.put("/update-password", checkLogin, updatePassword);
 
 // update personal info
 router.put(
-  '/update-info',
+  "/update-info",
   checkLogin,
   fileUploader(
     imagConfig.profile.DIR,
@@ -32,13 +33,14 @@ router.put(
 );
 
 // job routes
-router.post('/create-job-report', checkLogin, createJObReport);
+router.post("/create-job-report", checkLogin, createJObReport);
 //blog routes
-router.post('/create-blog', checkLogin, createBlog);
-router.get('/blogs', getBlogs);
+router.post("/create-blog", checkLogin, createBlog);
+router.get("/blogs", getBlogs);
 
 // add address
-router.put('/add-address', checkLogin, addAddress);
-router.put('/add-education', checkLogin, addEducation);
+router.put("/add-address", checkLogin, addAddress);
+router.put("/add-education", checkLogin, addEducation);
+router.post("/account-activation", checkLogin, accountActivation);
 
 module.exports = router;

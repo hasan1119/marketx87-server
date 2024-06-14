@@ -1,6 +1,7 @@
 //dependencies
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
+const Trans = require("../models/transition");
 
 // check login Middleware
 const checkLogin = async (req, res, next) => {
@@ -11,7 +12,11 @@ const checkLogin = async (req, res, next) => {
 
       const user = await User.findOne({
         _id: decode.id,
+      }).populate({
+        path: "transitions.transition",
+        model: "Trans", // Ensure 'Transition' is the correct model name
       });
+
       if (user === null) {
         console.log("not login");
         return res.status(401).send({

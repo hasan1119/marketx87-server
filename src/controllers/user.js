@@ -1,11 +1,12 @@
-const createHttpError = require('http-errors');
-const User = require('../models/user');
-const { hashPassword } = require('../utils/passwordUtils');
-const fs = require('fs');
-const path = require('path');
-const { imagConfig } = require('../utils/fileUpload.config');
-const Job = require('../models/job');
-const Blog = require('../models/blog');
+const createHttpError = require("http-errors");
+const User = require("../models/user");
+const { hashPassword } = require("../utils/passwordUtils");
+const fs = require("fs");
+const path = require("path");
+const { imagConfig } = require("../utils/fileUpload.config");
+const Job = require("../models/job");
+const Blog = require("../models/blog");
+const Trans = require("../models/transition");
 
 // update password
 const updatePassword = async (req, res, next) => {
@@ -83,10 +84,10 @@ const createJObReport = async (req, res, next) => {
 
     const user = await User.findOneAndUpdate(
       { _id: job.user },
-      { $set: { job: job._id, status: 'pending' } },
+      { $set: { job: job._id, status: "pending" } },
       { new: true }
     );
-    await Job.populate(user, { path: 'job' });
+    await Job.populate(user, { path: "job" });
     user.password = undefined;
     user.OTP = undefined;
 
@@ -110,7 +111,7 @@ const addAddress = async (req, res, next) => {
       },
       { new: true }
     );
-    await Job.populate(user, { path: 'job' });
+    await Job.populate(user, { path: "job" });
     user.password = undefined;
     user.OTP = undefined;
 
@@ -134,7 +135,7 @@ const addEducation = async (req, res, next) => {
       },
       { new: true }
     );
-    await Job.populate(user, { path: 'job' });
+    await Job.populate(user, { path: "job" });
     user.password = undefined;
     user.OTP = undefined;
 
@@ -169,6 +170,42 @@ const getBlogs = async (req, res, next) => {
   }
 };
 
+// account activation
+const accountActivation = async (req, res, next) => {
+  try {
+    const { account, amount, trans } = req.body;
+    const transition = await Trans({
+      user: req.id,
+      account,
+      amount,
+      trans,
+      type: "activation",
+      title: "Payment to active account",
+    }).save();
+    const user = await User.findOneAndUpdate(
+      { _id: req.id },
+      {
+        $addToSet: {
+          transitions: { type: "Activation", transition: transition._id },
+        },
+        $set: {
+          status: "Awaiting",
+        },
+      },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).send({ message: "User not found" });
+    }
+
+    res.status(200).send(user);
+  } catch (error) {
+    console.log(error);
+    return next(createHttpError(error));
+  }
+};
+
 module.exports = {
   updatePassword,
   updateInfo,
@@ -177,4 +214,5 @@ module.exports = {
   addEducation,
   createBlog,
   getBlogs,
+  accountActivation,
 };

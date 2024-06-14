@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const userSchema = mongoose.Schema(
   {
@@ -17,7 +17,7 @@ const userSchema = mongoose.Schema(
       type: String,
       trim: true,
       required: true,
-      unique: [true, 'Email should be unique'],
+      unique: [true, "Email should be unique"],
       validate: {
         validator: function (v) {
           return /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
@@ -35,17 +35,17 @@ const userSchema = mongoose.Schema(
     },
     gender: {
       type: String,
-      enum: ['Male', 'Female', 'Other'],
+      enum: ["Male", "Female", "Other"],
     },
     role: [
       {
         type: String,
-        enum: ['SuperAdmin', 'Admin', 'Student'],
+        enum: ["SuperAdmin", "Admin", "Member", "Manager"],
       },
     ],
     status: {
       type: String,
-      enum: ['unverified', 'verified', 'suspended'],
+      enum: ["Pending", "Awaiting", "Active", "Suspended", "Blocked"],
     },
     password: {
       type: String,
@@ -53,11 +53,11 @@ const userSchema = mongoose.Schema(
     },
     job: {
       type: mongoose.Types.ObjectId,
-      ref: 'Job',
+      ref: "Job",
     },
     avatar: {
       type: String,
-      default: '',
+      default: "",
     },
     address: {
       present: {
@@ -96,9 +96,21 @@ const userSchema = mongoose.Schema(
       approximatePassingYear: { type: String },
       currentYear: { type: String },
     },
+    transitions: [
+      {
+        type: {
+          type: String,
+          enum: ["Activation"],
+        },
+        transition: {
+          type: mongoose.Types.ObjectId,
+          ref: "Trans",
+        },
+      },
+    ],
   },
   { timestamps: true }
 );
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model("User", userSchema);
 module.exports = User;

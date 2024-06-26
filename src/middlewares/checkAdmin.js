@@ -4,8 +4,8 @@ const User = require("../models/user");
 
 // check login Middleware
 const checkAdmin = async (req, res, next) => {
-  console.log(req.user);
   try {
+    console.log("reached");
     if (req.user && req.user.role && req.user.role.includes("Admin")) {
       next();
     } else {

@@ -7,6 +7,7 @@ const { imagConfig } = require("../utils/fileUpload.config");
 const Job = require("../models/job");
 const Blog = require("../models/blog");
 const Trans = require("../models/transition");
+const SubmittedJob = require("../models/submitedJob");
 
 // update password
 const updatePassword = async (req, res, next) => {
@@ -206,6 +207,47 @@ const accountActivation = async (req, res, next) => {
   }
 };
 
+const getOverview = async (req, res, next) => {
+  try {
+    const { balance: availableBalance = 0 } = await User.findById(req.id);
+
+    const availableJobs = await Job.find({
+      status: "active",
+      candidates: { $ne: req.id },
+    });
+
+    const pendingJobs = await SubmittedJob.find({
+      user: req.id,
+      status: "Awaiting",
+    }).populate({ path: "job" });
+
+    const completedJobs = await SubmittedJob.find({
+      user: req.id,
+      status: "Approved",
+    }).populate({ path: "job" });
+
+    const cancelledJobs = await SubmittedJob.find({
+      user: req.id,
+      status: "Cancel",
+    }).populate({ path: "job" });
+
+    const pendingBalance = pendingJobs.reduce((acc, subJob) => {
+      const budget = parseFloat(subJob.job.budget);
+      return acc + budget;
+    }, 0);
+    res.send({
+      availableBalance,
+      pendingBalance,
+      availableJobs: availableJobs.length,
+      pendingJobs: pendingJobs.length,
+      completedJobs: completedJobs.length,
+      cancelledJobs: cancelledJobs.length,
+    });
+  } catch (error) {
+    return next(createHttpError(error));
+  }
+};
+
 module.exports = {
   updatePassword,
   updateInfo,
@@ -215,4 +257,5 @@ module.exports = {
   createBlog,
   getBlogs,
   accountActivation,
+  getOverview,
 };

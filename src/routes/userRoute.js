@@ -11,6 +11,7 @@ const {
   createBlog,
   getBlogs,
   accountActivation,
+  getOverview,
 } = require("../controllers/user");
 const { imagConfig } = require("../utils/fileUpload.config");
 const fileUploader = require("../middlewares/fileUploader");
@@ -34,13 +35,12 @@ router.put(
 
 // job routes
 router.post("/create-job-report", checkLogin, createJObReport);
-//blog routes
-router.post("/create-blog", checkLogin, createBlog);
 router.get("/blogs", getBlogs);
 
 // add address
 router.put("/add-address", checkLogin, addAddress);
 router.put("/add-education", checkLogin, addEducation);
 router.post("/account-activation", checkLogin, accountActivation);
+router.get("/getOverview", checkLogin, getOverview);
 
 module.exports = router;

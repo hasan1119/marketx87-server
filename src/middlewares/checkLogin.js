@@ -16,11 +16,10 @@ const checkLogin = async (req, res, next) => {
         path: "transitions.transition",
         model: "Trans", // Ensure 'Transition' is the correct model name
       });
-
       if (user === null) {
         console.log("not login");
         return res.status(401).send({
-          status: "Unauthorized",
+          status: "Unauthorized 1",
         });
       }
 
@@ -33,19 +32,19 @@ const checkLogin = async (req, res, next) => {
         next();
       } else {
         return res.status(401).send({
-          status: "Unauthorized",
+          status: "Unauthorized 2",
         });
       }
     } else {
       return res.status(401).send({
-        status: "Unauthorized",
+        status: "Unauthorized 3",
       });
     }
   } catch (error) {
     console.log(error);
     if (error.message === "jwt expired") {
       return res.status(401).send({
-        status: "Unauthorized",
+        status: "Unauthorized 4",
       });
     }
     next(error);

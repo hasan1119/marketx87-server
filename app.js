@@ -27,9 +27,8 @@ app.set("trust proxy", true);
 
 // Serve static files from the 'public' directory
 app.use(express.static("public"));
-
 // Security middleware initialization
-app.use(cors({ origin: "https://marketx87.com" }));
+app.use(cors({ origin: ["https://marketx87.com", "http://localhost:3000"] }));
 app.use(helmet());
 app.use(mongoSanitize());
 app.use(hpp());

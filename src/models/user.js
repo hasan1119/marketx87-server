@@ -27,7 +27,10 @@ const userSchema = mongoose.Schema(
         message: (props) => `${props.value} is not a valid email!`,
       },
     },
-
+    balance: {
+      type: Number,
+      required: true,
+    },
     phone: {
       type: String,
       trim: true,
@@ -55,6 +58,12 @@ const userSchema = mongoose.Schema(
       type: mongoose.Types.ObjectId,
       ref: "Job",
     },
+    jobs: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "Job",
+      },
+    ],
     avatar: {
       type: String,
       default: "",

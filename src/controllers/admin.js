@@ -75,10 +75,48 @@ const changeUserStatus = async (req, res, next) => {
   }
 };
 
+// create JOb Report
+const createBlog = async (req, res, next) => {
+  try {
+    const job = req.body;
+    console.log(job);
+    const blog = await Blog.create(job);
+    res.send(blog);
+  } catch (error) {
+    console.log(error);
+    return next(createHttpError(error));
+  }
+};
+
+// create JObs
+const createJob = async (req, res, next) => {
+  try {
+    const jobObj = req.body;
+    const job = await Job.create({ ...jobObj, creator: req.id });
+    res.send(job);
+  } catch (error) {
+    console.log(error);
+    return next(createHttpError(error));
+  }
+};
+// get all jobs
+const getAllJobs = async (req, res, next) => {
+  try {
+    const job = await Job.find();
+    res.send(job);
+  } catch (error) {
+    console.log(error);
+    return next(createHttpError(error));
+  }
+};
+
 module.exports = {
   getAllJobReports,
   changeReportStatus,
   deleteReport,
   getAllUsers,
   changeUserStatus,
+  createBlog,
+  createJob,
+  getAllJobs,
 };

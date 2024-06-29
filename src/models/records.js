@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const submittedJobSchema = mongoose.Schema(
+const recordsSchema = mongoose.Schema(
   {
     job: {
       type: mongoose.Types.ObjectId,
@@ -18,11 +18,11 @@ const submittedJobSchema = mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["Awaiting", "Approved", "Cancel"],
+      enum: ["Awaiting", "Approved", "Rejected"],
     },
   },
   { timestamps: true }
 );
 
-const SubmittedJob = mongoose.model("SubmittedJob", submittedJobSchema);
-module.exports = SubmittedJob;
+const Record = mongoose.model("Record", recordsSchema);
+module.exports = Record;

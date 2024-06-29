@@ -1,10 +1,16 @@
 const Job = require("../models/job");
-const SubmittedJob = require("../models/submitedJob");
+const Record = require("../models/records");
 const User = require("../models/user");
 
 const getJobs = async (req, res, next) => {
   try {
-    const jobs = await Job.find({ status: { $ne: "hidden" } });
+    const jobs = await Job.find({ status: { $ne: "hidden" } })
+      .populate({
+        path: "records.user",
+      })
+      .populate({
+        path: "records.record",
+      });
     res.send(jobs);
   } catch (error) {
     next(error);
@@ -41,22 +47,27 @@ const submitJob = async (req, res, next) => {
   try {
     const { jobId } = req.params;
     const { content } = req.body;
-    const submittedJob = await SubmittedJob({
+    const submittedJob = await Record({
       job: jobId,
       user: req.id,
       content,
       status: "Awaiting",
     }).save();
-    const user = await User.findByIdAndUpdate(req.id, {
-      $addToSet: { jobs: jobId },
-    });
+    const user = await User.findByIdAndUpdate(
+      req.id,
+      {
+        $addToSet: { jobs: jobId },
+      },
+      { new: true }
+    );
     const job = await Job.findByIdAndUpdate(
       jobId,
-      { $addToSet: { candidates: req.id } },
+      { $addToSet: { records: { user: req.id, record: submittedJob._id } } },
       { new: true }
     );
     res.send({ job, user });
   } catch (error) {
+    console.log(error);
     next(error);
   }
 };

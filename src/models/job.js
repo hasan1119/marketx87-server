@@ -38,11 +38,18 @@ const jobSchema = new Schema({
   status: {
     type: String,
     required: true,
+    enum: ["hidden", "active", "completed", "stopped"],
   },
-  candidates: [
+  records: [
     {
-      type: mongoose.Types.ObjectId,
-      ref: "User",
+      user: {
+        type: mongoose.Types.ObjectId,
+        ref: "User",
+      },
+      record: {
+        type: mongoose.Types.ObjectId,
+        ref: "Record",
+      },
     },
   ],
 });

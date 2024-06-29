@@ -10,12 +10,20 @@ const {
   createBlog,
   createJob,
   getAllJobs,
+  getAllRecords,
+  changeRecordStatus,
 } = require("../controllers/admin");
 const checkAdmin = require("../middlewares/checkAdmin");
 const checkLogin = require("../middlewares/checkLogin");
 const router = express.Router();
 
-router.get("/admin/job-reports", checkLogin, checkAdmin, getAllJobReports);
+router.get("/all-records", checkLogin, checkAdmin, getAllRecords);
+router.put(
+  "/changeRecordStatus/:recordId",
+  checkLogin,
+  checkAdmin,
+  changeRecordStatus
+);
 router.put("/change-report-status", checkLogin, checkAdmin, changeReportStatus);
 router.delete(`/delete-report/:id`, checkLogin, checkAdmin, deleteReport);
 router.get(`/admin/users`, checkLogin, checkAdmin, getAllUsers);

@@ -5,13 +5,44 @@ const fs = require("fs");
 const path = require("path");
 const { imagConfig } = require("../utils/fileUpload.config");
 const Job = require("../models/job");
+const Record = require("../models/records");
 
-// update password
-const getAllJobReports = async (req, res, next) => {
+// all records
+const getAllRecords = async (req, res, next) => {
   try {
-    const jobs = await Job.find();
+    const records = await Record.find()
+      .populate({ path: "user" })
+      .populate({ path: "job" });
+    res.send(records);
+  } catch (error) {
+    console.log(error);
+    return next(createHttpError(error));
+  }
+};
 
-    res.send(jobs);
+// Change record status
+const changeRecordStatus = async (req, res, next) => {
+  try {
+    const { status } = req.body;
+    const { recordId } = req.params;
+    const record = await Record.findByIdAndUpdate(
+      recordId,
+      { $set: { status } },
+      { new: true }
+    )
+      .populate({ path: "user" })
+      .populate({ path: "job" });
+
+    if (record.status === "Approved") {
+      const { job: { budget } = {}, user: { _id: userId } = {} } = record;
+      const user = await User.findByIdAndUpdate(
+        userId,
+        { $inc: { balance: budget } },
+        { new: true }
+      );
+      console.log(user);
+    }
+    res.send(record);
   } catch (error) {
     console.log(error);
     return next(createHttpError(error));
@@ -111,7 +142,7 @@ const getAllJobs = async (req, res, next) => {
 };
 
 module.exports = {
-  getAllJobReports,
+  getAllRecords,
   changeReportStatus,
   deleteReport,
   getAllUsers,
@@ -119,4 +150,5 @@ module.exports = {
   createBlog,
   createJob,
   getAllJobs,
+  changeRecordStatus,
 };

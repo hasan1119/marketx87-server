@@ -7,7 +7,7 @@ const { imagConfig } = require("../utils/fileUpload.config");
 const Job = require("../models/job");
 const Blog = require("../models/blog");
 const Trans = require("../models/transition");
-const SubmittedJob = require("../models/submitedJob");
+const Record = require("../models/records");
 
 // update password
 const updatePassword = async (req, res, next) => {
@@ -213,22 +213,22 @@ const getOverview = async (req, res, next) => {
 
     const availableJobs = await Job.find({
       status: "active",
-      candidates: { $ne: req.id },
+      "records.user": { $ne: req.id },
     });
 
-    const pendingJobs = await SubmittedJob.find({
+    const pendingJobs = await Record.find({
       user: req.id,
       status: "Awaiting",
     }).populate({ path: "job" });
 
-    const completedJobs = await SubmittedJob.find({
+    const completedJobs = await Record.find({
       user: req.id,
       status: "Approved",
     }).populate({ path: "job" });
 
-    const cancelledJobs = await SubmittedJob.find({
+    const cancelledJobs = await Record.find({
       user: req.id,
-      status: "Cancel",
+      status: "Rejected",
     }).populate({ path: "job" });
 
     const pendingBalance = pendingJobs.reduce((acc, subJob) => {

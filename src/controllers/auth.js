@@ -79,7 +79,7 @@ const verifyEmail = async (req, res, next) => {
         { email, OTP },
         {
           $set: {
-            status: "verified",
+            status: "Pending",
             OTP: "",
           },
         },

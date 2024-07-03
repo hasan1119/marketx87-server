@@ -12,6 +12,8 @@ const {
   getBlogs,
   accountActivation,
   getOverview,
+  makeWithdraw,
+  getAllWithdraws,
 } = require("../controllers/user");
 const { imagConfig } = require("../utils/fileUpload.config");
 const fileUploader = require("../middlewares/fileUploader");
@@ -42,5 +44,7 @@ router.put("/add-address", checkLogin, addAddress);
 router.put("/add-education", checkLogin, addEducation);
 router.post("/account-activation", checkLogin, accountActivation);
 router.get("/getOverview", checkLogin, getOverview);
+router.post("/makeWithdraw", checkLogin, makeWithdraw);
+router.get("/getAllWithdraws", checkLogin, getAllWithdraws);
 
 module.exports = router;

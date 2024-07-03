@@ -11,10 +11,6 @@ const jobSchema = new Schema({
     type: String,
     required: true,
   },
-  budget: {
-    type: String,
-    required: true,
-  },
   description: {
     type: String,
     required: true,
@@ -24,15 +20,15 @@ const jobSchema = new Schema({
     ref: "User",
   },
   budget: {
-    type: String,
+    type: Number,
     required: true,
   },
   limit: {
-    type: String,
+    type: Number,
     required: true,
   },
   time: {
-    type: String,
+    type: Number,
     required: true,
   },
   status: {

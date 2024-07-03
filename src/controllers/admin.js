@@ -6,6 +6,7 @@ const path = require("path");
 const { imagConfig } = require("../utils/fileUpload.config");
 const Job = require("../models/job");
 const Record = require("../models/records");
+const Withdraw = require("../models/withdraw");
 
 // all records
 const getAllRecords = async (req, res, next) => {
@@ -141,6 +142,39 @@ const getAllJobs = async (req, res, next) => {
   }
 };
 
+const getAllWithdrawsByAdmin = async (req, res, next) => {
+  try {
+    const withdraws = await Withdraw.find().populate({
+      path: "trans",
+      populate: { path: "user" },
+    });
+    return res.send(withdraws);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
+const changeUpdateWithdrawStatus = async (req, res, next) => {
+  try {
+    const { withdrawId, status } = req.body;
+    const withdraw = await Withdraw.findByIdAndUpdate(
+      withdrawId,
+      {
+        $set: { status },
+      },
+      { new: true }
+    ).populate({
+      path: "trans",
+      populate: { path: "user" },
+    });
+    console.log(withdrawId);
+    return res.send(withdraw);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllRecords,
   changeReportStatus,
@@ -151,4 +185,6 @@ module.exports = {
   createJob,
   getAllJobs,
   changeRecordStatus,
+  getAllWithdrawsByAdmin,
+  changeUpdateWithdrawStatus,
 };

@@ -47,12 +47,26 @@ const submitJob = async (req, res, next) => {
   try {
     const { jobId } = req.params;
     const { content } = req.body;
+    let job = await Job.findById(jobId);
+
+    if (job.limit == job.records.length) {
+      return res.status(400).send({ message: "Already completed the target!" });
+    }
+
+    if (job.limit - job.records.length == 1) {
+      job = await Job.findByIdAndUpdate(
+        jobId,
+        { $set: { status: "completed" } },
+        { new: true }
+      );
+    }
     const submittedJob = await Record({
       job: jobId,
       user: req.id,
       content,
       status: "Awaiting",
     }).save();
+
     const user = await User.findByIdAndUpdate(
       req.id,
       {
@@ -60,7 +74,7 @@ const submitJob = async (req, res, next) => {
       },
       { new: true }
     );
-    const job = await Job.findByIdAndUpdate(
+    job = await Job.findByIdAndUpdate(
       jobId,
       { $addToSet: { records: { user: req.id, record: submittedJob._id } } },
       { new: true }

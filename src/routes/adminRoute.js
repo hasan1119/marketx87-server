@@ -12,6 +12,8 @@ const {
   getAllJobs,
   getAllRecords,
   changeRecordStatus,
+  getAllWithdrawsByAdmin,
+  changeUpdateWithdrawStatus,
 } = require("../controllers/admin");
 const checkAdmin = require("../middlewares/checkAdmin");
 const checkLogin = require("../middlewares/checkLogin");
@@ -36,6 +38,18 @@ router.put(
   checkLogin,
   checkAdmin,
   changeUserStatus
+);
+router.get(
+  `/get-all-withdraws-by-admin`,
+  checkLogin,
+  checkAdmin,
+  getAllWithdrawsByAdmin
+);
+router.put(
+  `/update-withdraw-status`,
+  checkLogin,
+  checkAdmin,
+  changeUpdateWithdrawStatus
 );
 
 module.exports = router;

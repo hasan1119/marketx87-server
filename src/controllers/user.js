@@ -8,6 +8,7 @@ const Job = require("../models/job");
 const Blog = require("../models/blog");
 const Trans = require("../models/transition");
 const Record = require("../models/records");
+const Withdraw = require("../models/withdraw");
 
 // update password
 const updatePassword = async (req, res, next) => {
@@ -248,6 +249,52 @@ const getOverview = async (req, res, next) => {
   }
 };
 
+const makeWithdraw = async (req, res, next) => {
+  try {
+    const { withdrawAmount, accountNumber, paymentMethod } = req.body;
+    const trans = await Trans({
+      user: req.id,
+      trans: "N/A",
+      account: accountNumber,
+      amount: withdrawAmount,
+      type: "withdraw",
+      title: `${withdrawAmount}TK withdraw to ${accountNumber}`,
+    }).save();
+
+    const withdraw = await Withdraw({
+      trans: trans._id,
+      status: "Reviewing",
+      method: paymentMethod,
+    }).save();
+
+    await User.findByIdAndUpdate(
+      trans.user,
+      {
+        $inc: { balance: -trans.amount },
+        $addToSet: { transitions: trans._id },
+      },
+      { new: true }
+    );
+
+    return res.send(withdraw);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
+const getAllWithdraws = async (req, res, next) => {
+  try {
+    const withdraws = await Withdraw.find({ "trans.user": req._id }).populate({
+      path: "trans",
+    });
+    return res.send(withdraws);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
 module.exports = {
   updatePassword,
   updateInfo,
@@ -258,4 +305,6 @@ module.exports = {
   getBlogs,
   accountActivation,
   getOverview,
+  makeWithdraw,
+  getAllWithdraws,
 };

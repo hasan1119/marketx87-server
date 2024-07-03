@@ -30,6 +30,7 @@ const userSchema = mongoose.Schema(
     balance: {
       type: Number,
       required: true,
+      default: 0,
     },
     phone: {
       type: String,

@@ -16,12 +16,12 @@ const transSchema = mongoose.Schema(
       required: true,
     },
     amount: {
-      type: String,
+      type: Number,
       required: true,
     },
     type: {
       type: String,
-      enum: ["activation"],
+      enum: ["activation", "withdraw"],
       required: true,
     },
     title: String,

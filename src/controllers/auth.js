@@ -18,9 +18,10 @@ function generate4DigitOTP() {
 // Register
 const register = async (req, res, next) => {
   try {
-    const { firstName, lastName, email, password } = req.body;
+    let { firstName, lastName, email, password, username, referral } = req.body;
     let user;
 
+    const referredBy = await User.findOne({ username: referral });
     const OTP = generate4DigitOTP();
 
     if (req.user) {
@@ -30,6 +31,7 @@ const register = async (req, res, next) => {
           $set: {
             firstName,
             lastName,
+            referredBy: referredBy?._id ? referredBy._id : null,
             password: await hashPassword(password),
             OTP,
           },
@@ -44,15 +46,30 @@ const register = async (req, res, next) => {
         role: ["Member"],
         password: await hashPassword(password),
         status: "Pending",
+        username,
+        referredBy: referredBy?._id ? referredBy._id : null,
         OTP,
       };
 
       user = await User.create(userObject);
     }
 
+    if (referredBy?._id) {
+      console.log("called rr");
+      await User.findOneAndUpdate(
+        { username: referral },
+        {
+          $addToSet: { referrals: user._id },
+        }
+      );
+    } else {
+      console.log("Invalid refer");
+    }
+
     delete user.password;
     delete user.OTP;
     await Job.populate(user, { path: "job" });
+    await User.populate(user, { path: "referrals" });
     res.send(user);
 
     const emailData = {
@@ -251,6 +268,7 @@ const createPasswordAndLogin = async (req, res, next) => {
 const login = async (req, res, next) => {
   const user = req.user;
   await Job.populate(user, { path: "job" });
+  await User.populate(user, { path: "referrals" });
   user.password = undefined;
   user.OTP = undefined;
   try {

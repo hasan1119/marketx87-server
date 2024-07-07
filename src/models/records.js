@@ -18,7 +18,7 @@ const recordsSchema = mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["Awaiting", "Approved", "Rejected"],
+      enum: ["Reviewing", "Approved", "Rejected"],
     },
   },
   { timestamps: true }

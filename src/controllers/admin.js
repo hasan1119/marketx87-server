@@ -95,11 +95,23 @@ const getAllUsers = async (req, res, next) => {
 const changeUserStatus = async (req, res, next) => {
   try {
     const { userId, status } = req.body;
-    const user = await User.findOneAndUpdate(
+    let user = await User.findOneAndUpdate(
       { _id: userId },
       { $set: { status } },
       { new: true }
-    );
+    ).populate({ path: "transitions.transition" });
+    if (!user.referredValidity && user.referredBy) {
+      await User.findOneAndUpdate(
+        { _id: user.referredBy },
+        { $inc: { balance: 30 } }
+      ).populate({ path: "transitions.transition" });
+
+      user = await User.findOneAndUpdate(
+        { _id: userId },
+        { $set: { referredValidity: true } },
+        { new: true }
+      ).populate({ path: "transitions.transition" });
+    }
     res.send(user);
   } catch (error) {
     console.log(error);

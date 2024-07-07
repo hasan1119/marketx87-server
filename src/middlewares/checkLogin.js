@@ -12,10 +12,12 @@ const checkLogin = async (req, res, next) => {
 
       const user = await User.findOne({
         _id: decode.id,
-      }).populate({
-        path: "transitions.transition",
-        model: "Trans", // Ensure 'Transition' is the correct model name
-      });
+      })
+        .populate({
+          path: "transitions.transition",
+          model: "Trans", // Ensure 'Transition' is the correct model name
+        })
+        .populate({ path: "referrals" });
       if (user === null) {
         console.log("not login");
         return res.status(401).send({

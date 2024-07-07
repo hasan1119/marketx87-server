@@ -13,6 +13,13 @@ const userSchema = mongoose.Schema(
       maxlength: 20,
       trim: true,
     },
+    username: {
+      type: String,
+      trim: true,
+      maxlength: 20,
+      unique: [true, "Username should be unique"],
+      required: true,
+    },
     email: {
       type: String,
       trim: true,
@@ -49,7 +56,7 @@ const userSchema = mongoose.Schema(
     ],
     status: {
       type: String,
-      enum: ["Pending", "Awaiting", "Active", "Suspended", "Blocked"],
+      enum: ["Pending", "Reviewing", "Active", "Suspended", "Blocked"],
     },
     password: {
       type: String,
@@ -118,6 +125,21 @@ const userSchema = mongoose.Schema(
         },
       },
     ],
+    referrals: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    referredBy: {
+      type: mongoose.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+    referredValidity: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

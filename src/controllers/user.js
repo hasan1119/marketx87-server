@@ -191,7 +191,7 @@ const accountActivation = async (req, res, next) => {
           transitions: { type: "Activation", transition: transition._id },
         },
         $set: {
-          status: "Awaiting",
+          status: "Reviewing",
         },
       },
       { new: true }
@@ -219,7 +219,7 @@ const getOverview = async (req, res, next) => {
 
     const pendingJobs = await Record.find({
       user: req.id,
-      status: "Awaiting",
+      status: "Reviewing",
     }).populate({ path: "job" });
 
     const completedJobs = await Record.find({

@@ -64,7 +64,7 @@ const submitJob = async (req, res, next) => {
       job: jobId,
       user: req.id,
       content,
-      status: "Awaiting",
+      status: "Reviewing",
     }).save();
 
     const user = await User.findByIdAndUpdate(

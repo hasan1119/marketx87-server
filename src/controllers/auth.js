@@ -91,27 +91,23 @@ const verifyEmail = async (req, res, next) => {
     const { OTP, email } = req.body;
     let user;
 
-    if (req.user) {
-      user = await User.findOneAndUpdate(
-        { email, OTP },
-        {
-          $set: {
-            status: "Pending",
-            OTP: "",
-          },
+    user = await User.findOneAndUpdate(
+      { email, OTP },
+      {
+        $set: {
+          status: "Pending",
+          OTP: "",
         },
-        { new: true }
-      );
-    } else {
-      res.sendStatus(400);
-    }
+      },
+      { new: true }
+    );
 
     if (user === null) {
       res.status(400).send({
         OTP: "Invalid OTP!",
       });
     }
-
+    console.log("Auth hit", user);
     delete user.password;
     delete user.OTP;
 

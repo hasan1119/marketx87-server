@@ -103,7 +103,7 @@ const changeUserStatus = async (req, res, next) => {
     if (!user.referredValidity && user.referredBy) {
       await User.findOneAndUpdate(
         { _id: user.referredBy },
-        { $inc: { balance: 30 } }
+        { $inc: { balance: 5 } }
       ).populate({ path: "transitions.transition" });
 
       user = await User.findOneAndUpdate(
